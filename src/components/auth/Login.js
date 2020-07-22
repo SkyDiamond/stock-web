@@ -6,8 +6,6 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import { Redirect } from "react-router-dom";
-// import jwt_decode from 'jwt-decode'
 
 const useStyles = (theme) => ({
   root: {
@@ -35,7 +33,6 @@ class Login extends Component {
     this.state = {
       email: "",
       password: "",
-      error: {},
       errorMessage: "",
     };
   }
