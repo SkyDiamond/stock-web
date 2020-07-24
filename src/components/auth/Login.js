@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { login } from "../../store/actions/authActions";
 import Container from "@material-ui/core/Container";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -6,6 +7,8 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import { Redirect } from "react-router-dom";
+// import jwt_decode from 'jwt-decode'
 
 const useStyles = (theme) => ({
   root: {
@@ -33,12 +36,43 @@ class Login extends Component {
     this.state = {
       email: "",
       password: "",
+      error: {},
       errorMessage: "",
     };
+
+    this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
-  
+
+  onChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
+  }
+  onSubmit(e) {
+    e.preventDefault();
+
+    const user = {
+      email: this.state.email,
+      password: this.state.password,
+    };
+
+    if (this.state.email !== "" && this.state.password !== "") {
+      login(user).then((res) => {
+        if (!res.error) {
+          // console.log(res.token)
+          // const token_decode = jwt_decode(res.token)
+          // console.log(token_decode);
+          this.props.history.push(`/`);
+        } else {
+          this.setState({ errorMessage: res.error });
+          // console.log(res.error);
+        }
+      });
+    }
+  }
+
   render() {
     const { classes } = this.props;
+    if (localStorage.usertoken) return <Redirect to="/" />;
 
     return (
       <React.Fragment>
