@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { withRouter, Redirect,Link } from "react-router-dom";
+import { withRouter, Redirect, Link } from "react-router-dom";
 import { getUser } from "../../store/actions/userActions";
 import { compose } from "redux";
 
@@ -11,9 +11,10 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import UsersTable from "./UsersTable";
+import Button from "@material-ui/core/Button";
 import EditComponent from "./EditComponent";
-import EditIcon from "@material-ui/icons/Edit";
-import IconButton from "@material-ui/core/IconButton";
+// import IconButton from "@material-ui/core/IconButton";
+// import AddCircle from "@material-ui/icons/AddCircle";
 
 const useStyles = (theme) => ({
   root: {
@@ -30,9 +31,12 @@ const useStyles = (theme) => ({
     alignItems: "center",
     justifyContent: "center",
   },
-  addbtn:{
+  addbtn: {
+    display: "flex",
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
     marginRight: theme.spacing(2),
-  }
+  },
 });
 
 class Dashboard extends Component {
@@ -41,8 +45,8 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { classes, users, editMode } = this.props;
-
+    const { classes, users, editMode } = this.props
+    
     if (!localStorage.usertoken) return <Redirect to="/login" />;
 
     return (
@@ -51,20 +55,34 @@ class Dashboard extends Component {
           <Container maxWidth="lg">
             <Paper>
               <Grid className={classes.grid} container item xs={12}>
-                {users.map((user) =>
+                {users && users.map((user) =>
                   user.user_editing ? (
                     <EditComponent key={user.user_id} user={user} />
                   ) : null
                 )}
                 {!editMode ? (
                   <>
-                    <Typography align="center" variant="h3" component="h4">
-                      Dashboard
-                    </Typography>
-
-                    <IconButton component={Link} to="/adduser">
-                      <EditIcon />
-                    </IconButton>
+                    <>
+                      <Grid className={classes.grid} item xs={12}>
+                        <Typography align="center" variant="h3" component="h4">
+                          Dashboard
+                        </Typography>
+                      </Grid>
+                      <Grid className={classes.addbtn} item xs={12}>
+                        {/* <IconButton component={Link} to="/adduser">
+                          <AddCircle />
+                        </IconButton> */}
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          component={Link}
+                          to="/adduser"
+                        >
+                          Add User
+                        </Button>
+                      </Grid>
+                    </>
                     <UsersTable />
                   </>
                 ) : null}
@@ -79,8 +97,8 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    users: state.users,
-    editMode: state.editmode,
+    users: state.user.users,
+    editMode: state.user.editmode,
   };
 };
 

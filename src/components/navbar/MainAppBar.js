@@ -1,5 +1,13 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
+import { Grid } from "@material-ui/core";
+import { compose } from "redux";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { logout } from "../../store/actions/authActions";
+
+//UI
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -14,10 +22,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Home from "@material-ui/icons/Home";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import { Link } from "react-router-dom";
-import { Grid } from "@material-ui/core";
-import { compose } from "redux";
-import { withRouter } from "react-router-dom";
 
 const useStyles = (theme) => ({
   root: {
@@ -44,8 +48,9 @@ class MainAppBar extends Component {
 
   logOut(e) {
     e.preventDefault();
-    localStorage.removeItem("usertoken");
-    this.props.history.push(`/`);
+    this.props.logout();
+    // localStorage.removeItem("usertoken");
+    this.props.history.push(`/login`);
   }
 
   toggleDrawer() {
@@ -112,6 +117,12 @@ class MainAppBar extends Component {
             </ListItemIcon>
             <ListItemText primary={"Dashboard"} />
           </ListItem>
+          <ListItem button component={Link} to="/profile">
+            <ListItemIcon>
+              <AccountCircle />
+            </ListItemIcon>
+            <ListItemText primary={"Profile"} />
+          </ListItem>
           <ListItem button onClick={this.logOut.bind(this)}>
             <ListItemIcon>
               <AccountCircle />
@@ -152,4 +163,14 @@ class MainAppBar extends Component {
   }
 }
 
-export default compose(withRouter, withStyles(useStyles))(MainAppBar);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logout: () => dispatch(logout()),
+  };
+};
+
+export default compose(
+  withRouter,
+  withStyles(useStyles),
+  connect(null, mapDispatchToProps)
+)(MainAppBar);

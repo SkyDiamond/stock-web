@@ -53,6 +53,7 @@ export const addUser = (newUser) => {
         last_name: newUser.user_lname,
         email: newUser.user_email,
         password: newUser.user_pass,
+        birth_day: newUser.user_birthday
       })
       .then((res) => {
         axios

@@ -101,7 +101,7 @@ class EditComponent extends Component {
                     </Typography>
                   </Grid>
                   <Grid className={classes.grid} container item xs={12}>
-                    <Grid className={classes.grid} item xs={12}>
+                    {/* <Grid className={classes.grid} item xs={12}>
                       <TextField
                         className={classes.textField}
                         type="text"
@@ -123,7 +123,7 @@ class EditComponent extends Component {
                         fullWidth
                       />
                     </Grid>
-                    <br />
+                    <br /> */}
                     {/* <TextField
                       className={classes.textField}
                       multiline
@@ -144,6 +144,17 @@ class EditComponent extends Component {
                       value={this.state.user_email}
                       onChange={this.onChange}
                       label="อีเมล"
+                      variant="outlined"
+                      fullWidth
+                    />
+                    <br />
+                    <TextField
+                      className={classes.textField}
+                      type="text"
+                      name="user_email"
+                      value={this.state.user_pass}
+                      onChange={this.onChange}
+                      label="รหัสผ่าน"
                       variant="outlined"
                       fullWidth
                     />

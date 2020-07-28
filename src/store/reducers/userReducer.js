@@ -6,14 +6,14 @@ const userReducer = (state = initState, action) => {
   switch (action.type) {
     case "FETCH_USER":
       var data = [];
-      // console.log(action.res.data)
+      
       Object.keys(action.res.data).forEach((key) => {
         var val = action.res.data[key];
 
         data.push({
           user_id: val.user_id,
-          user_fname: val.first_name,
-          user_lname: val.last_name,
+          // user_fname: val.first_name,
+          // user_lname: val.last_name,
           user_email: val.email,
           user_created: val.user_created,
           user_editing: false,
@@ -47,8 +47,8 @@ const userReducer = (state = initState, action) => {
           user.user_id === action.id
             ? {
                 ...user,
-                user_fname: action.newUser.user_fname,
-                user_lname: action.newUser.user_lname,
+                // user_fname: action.newUser.user_fname,
+                // user_lname: action.newUser.user_lname,
                 user_email: action.newUser.user_email,
                 user_editing: !user.user_editing,
               }
@@ -61,8 +61,8 @@ const userReducer = (state = initState, action) => {
 
       data.push({
         user_id: val.user_id,
-        user_fname: val.first_name,
-        user_lname: val.last_name,
+        // user_fname: val.first_name,
+        // user_lname: val.last_name,
         user_email: val.email,
         user_created: val.user_created,
         user_editing: false,

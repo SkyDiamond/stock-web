@@ -33,9 +33,9 @@ class TableComponent extends Component {
 
     return (
       <>
-        <TableCell component="th" scope="row">
+        {/* <TableCell component="th" scope="row">
           {user.user_fname} {user.user_lname}
-        </TableCell>
+        </TableCell> */}
         <TableCell align="center">{user.user_email}</TableCell>
         <TableCell align="center">
           {moment(user.user_created).fromNow()}

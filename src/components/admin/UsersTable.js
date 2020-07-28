@@ -28,14 +28,14 @@ class UsersTable extends Component {
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>ชื่อ-นามสกุล</TableCell>
+              {/* <TableCell>ชื่อ-นามสกุล</TableCell> */}
               <TableCell align="center">อีเมล</TableCell>
               <TableCell align="center">แก้ไขเมื่อ</TableCell>
               <TableCell align="center">แก้ไข/ลบ</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => (
+            {users && users.map((user) => (
               <TableRow key={user.user_id}>
                 {user.user_editing ? null : <TableComponent user={user} />}
               </TableRow>
@@ -50,7 +50,7 @@ class UsersTable extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    users: state.users,
+    users: state.user.users,
   };
 };
 
