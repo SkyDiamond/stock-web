@@ -70,7 +70,7 @@ class ProductDetail extends Component {
   }
   componentDidMount() {
     this.props.getProduct(this.props.match.params.id);
-    if (this.props.product) {
+    if (this.props.product.product_id) {
       this.checkProduct();
     }
   }
