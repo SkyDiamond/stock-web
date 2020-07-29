@@ -14,9 +14,9 @@ Front-end
 1. Reactjs
 
 Back-end
-1.Nodejs
-2.Sequelize
-3.MySQL
+1. Nodejs
+2. Sequelize
+3. MySQL
 
 ### วิธีใช้งาน ###
 1. `npm start` ด้านใน stock-web
