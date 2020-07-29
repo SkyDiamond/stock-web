@@ -1,10 +1,8 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+import { Redirect, Link } from "react-router-dom";
 import ProductList from "./ProductList";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import { Typography } from "@material-ui/core";
+import { Typography, Button, Paper, Grid, Container } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,23 +20,43 @@ const useStyles = makeStyles((theme) => ({
   grid: {
     padding: theme.spacing(2),
   },
+  addbtn: {
+    display: "flex",
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
+    marginRight: theme.spacing(2),
+  },
 }));
 
 export default function Main() {
   const classes = useStyles();
+  if (!localStorage.usertoken) return <Redirect to="/login" />;
   return (
     <React.Fragment>
       <Container
-        maxWidth="xl"
-        style={{ backgroundColor: "#cfe8fc", height: '100vh' }}
+        maxWidth={false}
+        style={{ backgroundColor: "#cfe8fc", height: "100vh" }}
         className={classes.grid}
       >
         <Container maxWidth="lg">
           <Paper className={classes.root}>
             <Grid className={classes.pad}>
               <Typography align="center" variant="h3" component="h4">
-                Inventory
+                Inventory 
               </Typography>
+            </Grid>
+            <Grid className={classes.addbtn} item xs={12}>
+              {/* <IconButton component={Link} to="/adduser">
+                          <AddCircle />
+                        </IconButton> */}
+              <Button
+                variant="contained"
+                color="primary"
+                component={Link}
+                to="/addproduct"
+              >
+                Add Product
+              </Button>
             </Grid>
             <Grid>
               <ProductList />

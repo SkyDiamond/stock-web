@@ -4,17 +4,12 @@ import { connect } from "react-redux";
 import { withRouter, Redirect, Link } from "react-router-dom";
 import { getUser } from "../../store/actions/userActions";
 import { compose } from "redux";
+import jwt_decode from "jwt-decode";
 
 //UI
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import { Container, Paper, Grid, Typography, Button } from "@material-ui/core";
 import UsersTable from "./UsersTable";
-import Button from "@material-ui/core/Button";
 import EditComponent from "./EditComponent";
-// import IconButton from "@material-ui/core/IconButton";
-// import AddCircle from "@material-ui/icons/AddCircle";
 
 const useStyles = (theme) => ({
   root: {
@@ -45,9 +40,10 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { classes, users, editMode } = this.props
-    
+    const { classes, users, editMode } = this.props;
+
     if (!localStorage.usertoken) return <Redirect to="/login" />;
+    if(jwt_decode(localStorage.usertoken).job_position !== 'admin') return <Redirect to="/" />;
 
     return (
       <React.Fragment>
@@ -55,11 +51,12 @@ class Dashboard extends Component {
           <Container maxWidth="lg">
             <Paper>
               <Grid className={classes.grid} container item xs={12}>
-                {users && users.map((user) =>
-                  user.user_editing ? (
-                    <EditComponent key={user.user_id} user={user} />
-                  ) : null
-                )}
+                {users &&
+                  users.map((user) =>
+                    user.user_editing ? (
+                      <EditComponent key={user.user_id} user={user} />
+                    ) : null
+                  )}
                 {!editMode ? (
                   <>
                     <>

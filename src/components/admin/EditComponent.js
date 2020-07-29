@@ -9,14 +9,20 @@ import { withRouter } from "react-router-dom";
 import { compose } from "redux";
 import { connect } from "react-redux";
 //UI
-import TextField from "@material-ui/core/TextField";
+import {
+  Container,
+  TextField,
+  IconButton,
+  Grid,
+  Typography,
+  Paper,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
-import IconButton from "@material-ui/core/IconButton";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import UpdateIcon from "@material-ui/icons/Update";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
 
 const useStyles = (theme) => ({
   root: {
@@ -43,17 +49,22 @@ const useStyles = (theme) => ({
   title: {
     margin: theme.spacing(4, 0, 2),
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
 });
 
 class EditComponent extends Component {
   constructor() {
     super();
     this.state = {
-      user_fname: "",
-      user_lname: "",
       user_email: "",
-      error: {},
-      errorMessage: "",
+      user_pass: "",
+      job_position: "",
     };
 
     this.onChange = this.onChange.bind(this);
@@ -61,9 +72,8 @@ class EditComponent extends Component {
 
   componentDidMount() {
     this.setState({
-      user_fname: this.props.user.user_fname,
-      user_lname: this.props.user.user_lname,
       user_email: this.props.user.user_email,
+      job_position: this.props.user.job_position,
     });
   }
 
@@ -101,42 +111,6 @@ class EditComponent extends Component {
                     </Typography>
                   </Grid>
                   <Grid className={classes.grid} container item xs={12}>
-                    {/* <Grid className={classes.grid} item xs={12}>
-                      <TextField
-                        className={classes.textField}
-                        type="text"
-                        name="user_fname"
-                        value={this.state.user_fname}
-                        onChange={this.onChange}
-                        label="ชื่อ"
-                        variant="outlined"
-                        fullWidth
-                      />
-                      <TextField
-                        className={classes.textField}
-                        type="text"
-                        name="user_lname"
-                        value={this.state.user_lname}
-                        onChange={this.onChange}
-                        label="นามสกุล"
-                        variant="outlined"
-                        fullWidth
-                      />
-                    </Grid>
-                    <br /> */}
-                    {/* <TextField
-                      className={classes.textField}
-                      multiline
-                      rows={4}
-                      type="text"
-                      name="user_detail"
-                      value={this.state.user_detail}
-                      onChange={this.onChange}
-                      label="รายละเอียดกิจกรรม"
-                      variant="outlined"
-                      fullWidth
-                    />
-                    <br /> */}
                     <TextField
                       className={classes.textField}
                       type="text"
@@ -151,13 +125,36 @@ class EditComponent extends Component {
                     <TextField
                       className={classes.textField}
                       type="text"
-                      name="user_email"
+                      name="user_pass"
                       value={this.state.user_pass}
                       onChange={this.onChange}
                       label="รหัสผ่าน"
                       variant="outlined"
                       fullWidth
                     />
+                    <br />
+                    <Grid className={classes.grid} item xs={12}>
+                      <FormControl
+                        variant="outlined"
+                        className={classes.formControl}
+                      >
+                        <InputLabel id="demo-simple-select-outlined-label">
+                          ตำแหน่ง
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value={this.state.job_position}
+                          defaultValue={user.job_position}
+                          name="job_position"
+                          onChange={this.onChange}
+                          label="Position"
+                        >
+                          <MenuItem value={"admin"}>Admin</MenuItem>
+                          <MenuItem value={"staff"}>Staff</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
                   </Grid>
                   <Grid className={classes.grid}>
                     <IconButton onClick={this.onUpdate.bind(this, user)}>

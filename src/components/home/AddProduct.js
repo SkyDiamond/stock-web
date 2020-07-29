@@ -6,12 +6,14 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import jwt_decode from "jwt-decode";
 
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import {
+  Container,
+  Paper,
+  Grid,
+  TextField,
+  Typography,
+  Button,
+} from "@material-ui/core";
 
 const useStyles = (theme) => ({
   root: {
@@ -65,20 +67,31 @@ class AddProduct extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
-  }
+  onChange = (e) => {
+    switch (e.target.name) {
+      case "selectedFile":
+        this.setState({ selectedFile: e.target.files[0] });
+        break;
+      default:
+        this.setState({ [e.target.name]: e.target.value });
+    }
+  };
   onSubmit(e) {
     e.preventDefault();
     const token_decode = jwt_decode(localStorage.usertoken);
+    const {
+      product_img,
+      product_name,
+      product_amount,
+      product_price,
+    } = this.state;
+    let formData = new FormData();
 
-    const newProduct = {
-      product_name: this.state.product_name,
-      product_price: this.state.product_price,
-      product_amount: this.state.product_amount,
-      product_img: this.state.selectedFile,
-      uid_editor: token_decode.user_id,
-    };
+    formData.append("product_img", product_img);
+    formData.append("product_name", product_name);
+    formData.append("product_price", product_price);
+    formData.append("product_amount", product_amount);
+    formData.append("uid_editor", token_decode.user_id);
 
     if (
       this.state.product_name !== "" &&
@@ -86,14 +99,14 @@ class AddProduct extends Component {
       this.state.product_amount !== "" &&
       this.state.selectedFile !== null
     ) {
-      console.log(newProduct)
-      this.props.addProduct(newProduct);
+      // console.log(newProduct);
+      this.props.addProduct(formData);
       this.props.history.push(`/`);
     }
   }
 
-  handleUploadClick = (event) => {
-    var file = event.target.files[0];
+  handleUploadClick = (e) => {
+    var file = e.target.files[0];
     const reader = new FileReader();
     if (file) {
       reader.readAsDataURL(file);
@@ -104,9 +117,7 @@ class AddProduct extends Component {
         });
       }.bind(this);
 
-      this.setState({
-        selectedFile: event.target.files[0],
-      });
+      this.setState({ product_img: e.target.files[0] });
     }
   };
 
@@ -132,21 +143,12 @@ class AddProduct extends Component {
                   </Grid>
                   <Grid className={classes.grid} container item xs={12}>
                     <Grid className={classes.grid} item xs={8}>
-                      {this.state.selectedFile !== null ? (
-                        <img
-                          className={classes.media}
-                          // src={`data:image/png;base64,${this.state.user_img}`}
-                          src={this.state.selectedFile}
-                          alt=""
-                        />
-                      ) : (
-                        <img
-                          className={classes.media}
-                          // src={`data:image/png;base64,${this.state.user_img}`}
-                          src={this.state.product_img}
-                          alt=""
-                        />
-                      )}
+                      <img
+                        className={classes.media}
+                        // src={`data:image/png;base64,${this.state.user_img}`}
+                        src={this.state.selectedFile}
+                        alt=""
+                      />
                     </Grid>
                     <Grid className={classes.grid} container item xs={8}>
                       <label htmlFor="upload-photo">
@@ -154,7 +156,7 @@ class AddProduct extends Component {
                           accept="image/*"
                           style={{ display: "none" }}
                           id="upload-photo"
-                          name="upload-photo"
+                          name="selectedFile"
                           type="file"
                           onChange={this.handleUploadClick}
                         />
@@ -166,6 +168,12 @@ class AddProduct extends Component {
                           Upload button
                         </Button>
                       </label>
+                      {/* <input
+                        type="file"
+                        name="selectedFile"
+                        onChange={this.onChange}
+                      />
+                      <button type="submit">Submit</button> */}
                     </Grid>
                     <Grid className={classes.grid} item xs={12}>
                       <TextField

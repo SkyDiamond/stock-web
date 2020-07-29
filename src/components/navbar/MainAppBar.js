@@ -6,22 +6,27 @@ import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { logout } from "../../store/actions/authActions";
+import jwt_decode from "jwt-decode";
 
 //UI
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+} from "@material-ui/core";
+
 import MenuIcon from "@material-ui/icons/Menu";
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import Home from "@material-ui/icons/Home";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
 const useStyles = (theme) => ({
   root: {
@@ -111,12 +116,14 @@ class MainAppBar extends Component {
             </ListItemIcon>
             <ListItemText primary={"Home"} />
           </ListItem>
-          <ListItem button component={Link} to="/dashboard">
-            <ListItemIcon>
-              <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary={"Dashboard"} />
-          </ListItem>
+          {jwt_decode(localStorage.usertoken).job_position === "admin" ? (
+            <ListItem button component={Link} to="/dashboard">
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Dashboard"} />
+            </ListItem>
+          ) : null}
           <ListItem button component={Link} to="/profile">
             <ListItemIcon>
               <AccountCircle />
@@ -125,7 +132,7 @@ class MainAppBar extends Component {
           </ListItem>
           <ListItem button onClick={this.logOut.bind(this)}>
             <ListItemIcon>
-              <AccountCircle />
+              <ExitToAppIcon />
             </ListItemIcon>
             <ListItemText primary={"Logout"} />
           </ListItem>

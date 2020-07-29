@@ -8,6 +8,7 @@ import Dashboard from "./components/admin/Dashboard";
 import AddUser from "./components/admin/AddUser";
 import Profile from "./components/user/Profile";
 import AddProduct from "./components/home/AddProduct";
+import ProductDetail from "./components/home/ProductDetail";
 
 class App extends Component {
   render() {
@@ -16,11 +17,12 @@ class App extends Component {
       <MainAppBar/>
         <Switch>
           <Route exact path="/" component={ Main } />
-          <Route exact path="/login" component={ Login } />
-          <Route exact path="/dashboard" component={ Dashboard } />
-          <Route exact path="/adduser" component={ AddUser } />
-          <Route exact path="/profile" component={ Profile } />
-          <Route exact path="/addproduct" component={ AddProduct } />
+          <Route path="/login" component={ Login } />
+          <Route path="/dashboard" component={ Dashboard } />
+          <Route path="/adduser" component={ AddUser } />
+          <Route path="/profile" component={ Profile } />
+          <Route path="/addproduct" component={ AddProduct } />
+          <Route path="/product/:id" component={ProductDetail} />
         </Switch>
       </BrowserRouter>
     );

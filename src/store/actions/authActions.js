@@ -6,10 +6,11 @@ export const login = (user) => {
       .post("http://localhost:5000/users/login", {
         email: user.email,
         password: user.password,
+        job_position: user.position,
       })
       .then((response) => {
-        // console.log(response)
         if (response.data.token) {
+          // console.log(response)
           dispatch({ type: "LOGIN_SUCCESS", response });
         } else {
           dispatch({ type: "LOGIN_FAIL", response });

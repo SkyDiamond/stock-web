@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { getProduct } from "../../store/actions/productActions";
+import { getAllProduct } from "../../store/actions/productActions";
 
 import Grid from "@material-ui/core/Grid";
 import ProductCard from "./ProductCard";
@@ -29,7 +29,7 @@ const useStyles = (theme) => ({
 
 class ProductList extends Component {
   componentDidMount() {
-    this.props.getProduct();
+    this.props.getAllProduct();
   }
 
   render() {
@@ -62,7 +62,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getProduct: () => dispatch(getProduct()),
+    getAllProduct: () => dispatch(getAllProduct()),
   };
 };
 

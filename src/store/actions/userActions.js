@@ -30,17 +30,17 @@ export const editUser = (id) => {
   };
 };
 
-export const updateUser = (id, newUser) => {
+export const updateUser = (id, newData) => {
   return (dispatch) => {
     axios
       .put(`http://127.0.0.1:5000/users/update/${id}`, {
-        user_fname: newUser.user_fname,
-        user_lname: newUser.user_lname,
-        user_email: newUser.user_email,
+        user_email: newData.user_email,
+        user_pass: newData.user_pass,
+        job_position: newData.job_position,
       })
       .then((res) => {
         // console.log(res)
-        dispatch({ type: "UPDATE_USER", id, newUser });
+        dispatch({ type: "UPDATE_USER", id, newData });
       });
   };
 };
@@ -49,20 +49,22 @@ export const addUser = (newUser) => {
   return (dispatch) => {
     axios
       .post("http://127.0.0.1:5000/users/register", {
-        first_name: newUser.user_fname,
-        last_name: newUser.user_lname,
         email: newUser.user_email,
         password: newUser.user_pass,
-        birth_day: newUser.user_birthday
+        job_position: newUser.job_position
       })
       .then((res) => {
-        axios
-          .get("http://127.0.0.1:5000/users/get", {
-            headers: { "Content-type": "application/json" },
-          })
-          .then((res) => {
-            dispatch({ type: "FETCH_USER", res });
-          });
+        if(res.data.error){
+          dispatch({ type: "ERROR_USER", res });
+        }else{
+          axios
+            .get("http://127.0.0.1:5000/users/get", {
+              headers: { "Content-type": "application/json" },
+            })
+            .then((res) => {
+              dispatch({ type: "FETCH_USER", res });
+            });
+        }
         // console.log(res.data);
         // dispatch({ type: "ADD_USER", res, newUser });
       });

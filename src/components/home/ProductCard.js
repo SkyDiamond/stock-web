@@ -1,26 +1,32 @@
 import React, { Component } from "react";
+import { deleteProduct } from "../../store/actions/productActions";
 import { Link } from "react-router-dom";
+import { compose } from "redux";
+import { connect } from "react-redux";
 
 // import RunImg from "../img/Card.jpg"
 
 //material-ui
 import { withStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardMedia from "@material-ui/core/CardMedia";
-import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import ShareIcon from "@material-ui/icons/Share";
-import Grid from "@material-ui/core/Grid";
-import CardActionArea from "@material-ui/core/CardActionArea";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  IconButton,
+  Typography,
+  Grid,
+  CardActionArea,
+  Divider,
+} from "@material-ui/core";
+
+// import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const useStyles = (theme) => ({
   media: {
-    // height: 140,
-    height: 0,
-    paddingTop: "56.25%", // 16:9
+    height: 140,
+    width: "100%",
   },
   expand: {
     transform: "rotate(0deg)",
@@ -29,15 +35,17 @@ const useStyles = (theme) => ({
       duration: theme.transitions.duration.shortest,
     }),
   },
-  expandOpen: {
-    transform: "rotate(180deg)",
-  },
-  underline: {
-    underline: "none",
+  dvd: {
+    margin: theme.spacing(1),
   },
 });
 
 class ProductCard extends Component {
+  onDelete = (val, e) => {
+    e.preventDefault();
+    this.props.deleteProduct(val.product_id);
+  };
+
   render() {
     const { classes, product } = this.props;
 
@@ -46,29 +54,43 @@ class ProductCard extends Component {
         <Card>
           <CardActionArea
             component={Link}
-            to={'/product/' + product.product_id}
+            to={"/product/" + product.product_id}
             style={{ textDecoration: "none" }}
           >
             <CardMedia
               className={classes.media}
-              // image={RunImg}
+              image={`http://localhost:5000/uploads/${product.product_img}`}
               title="Contemplative Reptile"
             />
             <CardContent>
               <Typography gutterBottom variant="h5" component="h2">
                 {product.product_name}
               </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
-                {product.product_price}
+              <Divider className={classes.dvd} />
+              <Typography
+                gutterBottom
+                variant="body1"
+                color="textSecondary"
+                component="p"
+              >
+                ราคาต่อชิ้น : {product.product_price} บาท
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="body2"
+                color="textSecondary"
+                component="p"
+              >
+                จำนวนที่เหลือ : {product.product_amount} ชิ้น
               </Typography>
             </CardContent>
           </CardActionArea>
           <CardActions disableSpacing>
-            <IconButton aria-label="add to favorites">
-              <FavoriteIcon />
-            </IconButton>
-            <IconButton aria-label="share">
-              <ShareIcon />
+            {/* <IconButton aria-label="edit">
+              <EditIcon />
+            </IconButton> */}
+            <IconButton onClick={this.onDelete.bind(this, product)}>
+              <DeleteIcon />
             </IconButton>
           </CardActions>
         </Card>
@@ -77,4 +99,12 @@ class ProductCard extends Component {
   }
 }
 
-export default withStyles(useStyles)(ProductCard);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteProduct: (id) => dispatch(deleteProduct(id)),
+  };
+};
+export default compose(
+  connect(null, mapDispatchToProps),
+  withStyles(useStyles)
+)(ProductCard);

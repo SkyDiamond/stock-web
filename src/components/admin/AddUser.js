@@ -4,13 +4,20 @@ import { addUser } from "../../store/actions/userActions";
 import { Redirect } from "react-router-dom";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import jwt_decode from "jwt-decode";
 
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import {
+  Container,
+  Paper,
+  Grid,
+  TextField,
+  Typography,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@material-ui/core";
 
 const useStyles = (theme) => ({
   root: {
@@ -37,19 +44,22 @@ const useStyles = (theme) => ({
   title: {
     margin: theme.spacing(4, 0, 2),
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
 });
 
 class AddUser extends Component {
   constructor() {
     super();
     this.state = {
-      // user_fname: "",
-      // user_lname: "",
-      // user_birthday: "",
       user_email: "",
       user_pass: "",
-      error: {},
-      errorMessage: "",
+      job_position: "",
     };
 
     this.onChange = this.onChange.bind(this);
@@ -63,29 +73,30 @@ class AddUser extends Component {
     e.preventDefault();
 
     const newUser = {
-      // user_fname: this.state.user_fname,
-      // user_lname: this.state.user_lname,
-      // user_birthday: this.state.user_birthday,
       user_email: this.state.user_email,
       user_pass: this.state.user_pass,
+      job_position: this.state.job_position,
     };
 
     if (
-      // this.state.user_fname !== "" &&
-      // this.state.user_lname !== "" &&
-      // this.state.user_birthday !== "" &&
       this.state.user_email !== "" &&
-      this.state.user_pass !== ""
+      this.state.user_pass !== "" &&
+      this.state.job_position !== ""
     ) {
       // console.log(newUser)
       this.props.addUser(newUser);
+      // if (this.props.userMessage === null) {
       this.props.history.push(`/dashboard`);
+      // }
     }
   }
 
   render() {
     const { classes } = this.props;
+
     if (!localStorage.usertoken) return <Redirect to="/login" />;
+    if(jwt_decode(localStorage.usertoken).job_position !== 'admin') return <Redirect to="/" />;
+
     return (
       <React.Fragment>
         <Container maxWidth="xl" className={classes.cont}>
@@ -104,65 +115,53 @@ class AddUser extends Component {
                     </Typography>
                   </Grid>
                   <Grid className={classes.grid} container item xs={12}>
-                    {/* <Grid className={classes.grid} item xs={12}>
+                    <Grid className={classes.grid} item xs={12}>
                       <TextField
                         className={classes.textField}
                         type="text"
-                        name="user_fname"
-                        value={this.state.user_fname}
+                        name="user_email"
+                        value={this.state.user_email}
                         onChange={this.onChange}
-                        label="ชื่อ"
-                        variant="outlined"
-                        fullWidth
-                      />
-                      <TextField
-                        className={classes.textField}
-                        type="text"
-                        name="user_lname"
-                        value={this.state.user_lname}
-                        onChange={this.onChange}
-                        label="นามสกุล"
+                        label="อีเมล"
                         variant="outlined"
                         fullWidth
                       />
                     </Grid>
-                    <br /> */}
-                    <TextField
-                      className={classes.textField}
-                      type="text"
-                      name="user_email"
-                      value={this.state.user_email}
-                      onChange={this.onChange}
-                      label="อีเมล"
-                      variant="outlined"
-                      fullWidth
-                    />
                     <br />
-                    <TextField
-                      className={classes.textField}
-                      type="password"
-                      name="user_pass"
-                      value={this.state.user_pass}
-                      onChange={this.onChange}
-                      label="รหัสผ่าน"
-                      variant="outlined"
-                      fullWidth
-                    />
-                    {/* <br />
-                    <Grid className={classes.grid}>
+                    <Grid className={classes.grid} item xs={12}>
                       <TextField
                         className={classes.textField}
-                        id="date"
-                        type="date"
-                        name="user_birthday"
-                        value={this.state.user_birthday}
+                        type="password"
+                        name="user_pass"
+                        value={this.state.user_pass}
                         onChange={this.onChange}
-                        // defaultValue="2017-05-24"
-                        label="วันเกิด"
+                        label="รหัสผ่าน"
                         variant="outlined"
                         fullWidth
                       />
-                    </Grid> */}
+                    </Grid>
+                    <br />
+                    <Grid className={classes.grid} item xs={12}>
+                      <FormControl
+                        variant="outlined"
+                        className={classes.formControl}
+                      >
+                        <InputLabel id="demo-simple-select-outlined-label">
+                          Age
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value={this.state.job_position}
+                          name="job_position"
+                          onChange={this.onChange}
+                          label="Position"
+                        >
+                          <MenuItem value={"staff"}>Staff</MenuItem>
+                          <MenuItem value={"admin"}>Admin</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
                   </Grid>
                   <Grid className={classes.grid}>
                     <Button type="submit" variant="contained" color="primary">
@@ -170,8 +169,8 @@ class AddUser extends Component {
                     </Button>
                   </Grid>
                   <Typography align="center" variant="h5" component="h5">
-                    {this.state.errorMessage !== "" ? (
-                      <p>{this.state.errorMessage}</p>
+                    {this.props.userMessage !== "" ? (
+                      <p>{this.props.userMessage}</p>
                     ) : null}
                   </Typography>
                 </form>
@@ -184,6 +183,11 @@ class AddUser extends Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    userMessage: state.user.userMessage,
+  };
+};
 const mapDispatchToProps = (dispatch) => {
   return {
     addUser: (user) => dispatch(addUser(user)),
@@ -191,5 +195,5 @@ const mapDispatchToProps = (dispatch) => {
 };
 export default compose(
   withStyles(useStyles),
-  connect(null, mapDispatchToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(AddUser);

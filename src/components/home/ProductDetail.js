@@ -1,19 +1,21 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { getProfile, updateProfile } from "../../store/actions/profileActions";
-import { updateUser } from "../../store/actions/userActions";
 import { Redirect } from "react-router-dom";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import jwt_decode from "jwt-decode";
+import { updateProduct, getProduct } from "../../store/actions/productActions";
+import { Link } from "react-router-dom";
 import equal from "fast-deep-equal";
+import jwt_decode from "jwt-decode";
 
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import {
+  Container,
+  Paper,
+  Grid,
+  TextField,
+  Typography,
+  Button,
+} from "@material-ui/core";
 
 const useStyles = (theme) => ({
   root: {
@@ -49,52 +51,43 @@ const useStyles = (theme) => ({
   },
 });
 
-class Profile extends Component {
+class ProductDetail extends Component {
   constructor() {
     super();
     this.state = {
-      user_id: "",
-      user_fname: "",
-      user_lname: "",
-      user_birthday: "",
-      user_email: "",
-      user_pass: "",
-      job_position: "",
-      user_img: null,
+      product_id: "",
+      product_name: "",
+      product_price: "",
+      product_amount: "",
+      product_img: null,
+      uid_editor: null,
       selectedFile: null,
-      errorMessage: "",
     };
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.checkProfile = this.checkProfile.bind(this);
+    this.checkProduct = this.checkProduct.bind(this);
   }
   componentDidMount() {
-    const token_decode = jwt_decode(localStorage.usertoken);
-    // console.log(token_decode);
-    this.props.getProfile(token_decode.user_id);
-    if (this.props.profile) {
-      this.checkProfile();
+    this.props.getProduct(this.props.match.params.id);
+    if (this.props.product) {
+      this.checkProduct();
     }
   }
 
   componentDidUpdate(prevProps) {
-    /*เช็คถ้า profile เปลี่ยน*/
-    if (!equal(this.props.profile, prevProps.profile)) {
-      this.checkProfile();
+    /*เช็คถ้า product เปลี่ยน*/
+    if (!equal(this.props.product, prevProps.product)) {
+      this.checkProduct();
     }
   }
-  checkProfile() {
-    const token_decode = jwt_decode(localStorage.usertoken);
-
+  checkProduct() {
     this.setState({
-      user_id: this.props.profile.user_id,
-      user_fname: this.props.profile.user_fname,
-      user_lname: this.props.profile.user_lname,
-      user_birthday: this.props.profile.user_birthday,
-      user_email: token_decode.email,
-      job_position: token_decode.job_position,
-      user_img: "data:image/png;base64," + this.props.profile.user_img,
+      product_id: this.props.product.product_id,
+      product_name: this.props.product.product_name,
+      product_price: this.props.product.product_price,
+      product_amount: this.props.product.product_amount,
+      product_img: this.props.product.product_img,
     });
   }
   onChange(e) {
@@ -102,31 +95,34 @@ class Profile extends Component {
   }
   onSubmit(e) {
     e.preventDefault();
+    const token_decode = jwt_decode(localStorage.usertoken);
+    const {
+      product_img,
+      product_name,
+      product_amount,
+      product_price,
+    } = this.state;
+    let formData = new FormData();
 
-    const newProfile = {
-      user_fname: this.state.user_fname,
-      user_lname: this.state.user_lname,
-      user_birthday: this.state.user_birthday,
-      profile_img: this.state.selectedFile,
-      user_email: this.state.email,
-      user_pass: this.state.user_pass,
-      job_position: this.state.job_position,
-    };
+    formData.append("product_img", product_img);
+    formData.append("product_name", product_name);
+    formData.append("product_price", product_price);
+    formData.append("product_amount", product_amount);
+    formData.append("uid_editor", token_decode.user_id);
 
     if (
-      this.state.user_fname !== "" &&
-      this.state.user_lname !== "" &&
-      this.state.user_birthday !== "" &&
-      this.state.email !== ""
+      this.state.product_name !== "" &&
+      this.state.product_price !== "" &&
+      this.state.product_amount !== ""
     ) {
-      this.props.updateProfile(this.state.user_id, newProfile);
-      this.props.updateUser(this.state.user_id, newProfile);
-      // this.props.history.push(`/`);
+      // console.log(newProduct);
+      this.props.updateProduct(this.state.product_id, formData);
+      this.props.history.push(`/`);
     }
   }
 
-  handleUploadClick = (event) => {
-    var file = event.target.files[0];
+  handleUploadClick = (e) => {
+    var file = e.target.files[0];
     const reader = new FileReader();
     if (file) {
       reader.readAsDataURL(file);
@@ -138,7 +134,7 @@ class Profile extends Component {
       }.bind(this);
 
       this.setState({
-        selectedFile: event.target.files[0],
+        product_img: e.target.files[0],
       });
     }
   };
@@ -161,7 +157,7 @@ class Profile extends Component {
                 >
                   <Grid className={classes.grid} container item xs={12}>
                     <Typography align="center" variant="h3" component="h4">
-                      Profile
+                      Product Detail
                     </Typography>
                   </Grid>
                   <Grid className={classes.grid} container item xs={12}>
@@ -173,14 +169,14 @@ class Profile extends Component {
                           src={this.state.selectedFile}
                           alt=""
                         />
-                      ) : (
+                      ) : this.state.product_img !== null ? (
                         <img
                           className={classes.media}
                           // src={`data:image/png;base64,${this.state.user_img}`}
-                          src={this.state.user_img}
+                          src={`http://localhost:5000/uploads/${this.state.product_img}`}
                           alt=""
                         />
-                      )}
+                      ) : null}
                     </Grid>
                     <Grid className={classes.grid} container item xs={8}>
                       <label htmlFor="upload-photo">
@@ -205,79 +201,51 @@ class Profile extends Component {
                       <TextField
                         className={classes.textField}
                         type="text"
-                        name="user_fname"
-                        value={this.state.user_fname}
+                        name="product_name"
+                        value={this.state.product_name}
                         onChange={this.onChange}
                         label="ชื่อ"
                         variant="outlined"
                         fullWidth
                       />
+                    </Grid>
+                    <Grid className={classes.grid} item xs={12}>
                       <TextField
                         className={classes.textField}
                         type="text"
-                        name="user_lname"
-                        value={this.state.user_lname}
+                        name="product_price"
+                        value={this.state.product_price}
                         onChange={this.onChange}
-                        label="นามสกุล"
+                        label="ราคาต่อชิ้น"
+                        variant="outlined"
+                        fullWidth
+                      />
+                      <TextField
+                        className={classes.textField}
+                        type="text"
+                        name="product_amount"
+                        value={this.state.product_amount}
+                        onChange={this.onChange}
+                        label="จำนวน"
                         variant="outlined"
                         fullWidth
                       />
                     </Grid>
                     <br />
-                    <Grid className={classes.grid} container item xs={12}>
-                      <TextField
-                        className={classes.textField}
-                        id="date"
-                        type="date"
-                        name="user_birthday"
-                        value={this.state.user_birthday}
-                        onChange={this.onChange}
-                        InputLabelProps={{ shrink: true, required: true }}
-                        label="วันเกิด"
-                        variant="outlined"
-                        fullWidth
-                      />
-                      <br />
-                      <TextField
-                        className={classes.textField}
-                        type="text"
-                        name="user_email"
-                        value={this.state.user_email}
-                        onChange={this.onChange}
-                        label="อีเมล"
-                        disabled
-                        variant="outlined"
-                        fullWidth
-                      />
-                      <br />
-                      <TextField
-                        className={classes.textField}
-                        type="password"
-                        name="user_pass"
-                        value={this.state.user_pass}
-                        onChange={this.onChange}
-                        label="รหัสผ่าน"
-                        variant="outlined"
-                        fullWidth
-                      />
-                    </Grid>
                   </Grid>
                   <Grid className={classes.grid}>
                     <Button type="submit" variant="contained" color="primary">
                       Update
                     </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      component={Link}
+                      to="/"
+                    >
+                      Cancel
+                    </Button>
                   </Grid>
-                  <Typography align="center" variant="h5" component="h5">
-                    {this.props.profileMessage !== "" ? (
-                      <p>{this.props.profileMessage}</p>
-                    ) : null}
-                  </Typography>
-                  {/* {this.props.profile !== null ? (
-                    <>
-                      <p>{this.props.profile.user_fname}</p>
-                      <p>{this.props.profile.user_id}</p>
-                    </>
-                  ) : null} */}
                 </form>
               </Grid>
             </Paper>
@@ -288,21 +256,24 @@ class Profile extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
+  // const id = ownProps.match.params.id
+  // const products = state.product.products
+  // const product = products.filter((product) => product.product_id.toString() === id);
+
   return {
-    profile: state.profile.profile,
-    profileMessage: state.profile.profileMessage,
+    product: state.product.product,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getProfile: (id) => dispatch(getProfile(id)),
-    updateProfile: (id, newProfile) => dispatch(updateProfile(id, newProfile)),
-    updateUser: (id, data) => dispatch(updateUser(id, data)),
+    getProduct: (id) => dispatch(getProduct(id)),
+    updateProduct: (id, formData) => dispatch(updateProduct(id, formData)),
   };
 };
+
 export default compose(
   withStyles(useStyles),
   connect(mapStateToProps, mapDispatchToProps)
-)(Profile);
+)(ProductDetail);

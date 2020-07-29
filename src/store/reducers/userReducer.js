@@ -1,5 +1,6 @@
 const initState = {
   users: [],
+  userMessage: null,
   editmode: false,
 };
 const userReducer = (state = initState, action) => {
@@ -12,9 +13,8 @@ const userReducer = (state = initState, action) => {
 
         data.push({
           user_id: val.user_id,
-          // user_fname: val.first_name,
-          // user_lname: val.last_name,
           user_email: val.email,
+          job_position: val.job_position,
           user_created: val.user_created,
           user_editing: false,
         });
@@ -47,9 +47,8 @@ const userReducer = (state = initState, action) => {
           user.user_id === action.id
             ? {
                 ...user,
-                // user_fname: action.newUser.user_fname,
-                // user_lname: action.newUser.user_lname,
-                user_email: action.newUser.user_email,
+                user_email: action.newData.user_email,
+                job_position: action.newData.job_position,
                 user_editing: !user.user_editing,
               }
             : user
@@ -61,8 +60,6 @@ const userReducer = (state = initState, action) => {
 
       data.push({
         user_id: val.user_id,
-        // user_fname: val.first_name,
-        // user_lname: val.last_name,
         user_email: val.email,
         user_created: val.user_created,
         user_editing: false,
@@ -70,7 +67,13 @@ const userReducer = (state = initState, action) => {
       return {
         ...state,
         users: data,
+        userMessage: null,
       };
+      case "ERROR_USER":
+        return {
+          ...state,
+          userMessage: action.res.data.error,
+        };
     default:
       return state;
   }
