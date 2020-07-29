@@ -4,10 +4,8 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { getAllProduct } from "../../store/actions/productActions";
 
-import Grid from "@material-ui/core/Grid";
+import { Grid, TextField, Paper, CircularProgress } from "@material-ui/core";
 import ProductCard from "./ProductCard";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Paper from "@material-ui/core/Paper";
 
 const useStyles = (theme) => ({
   root: {
@@ -28,20 +26,56 @@ const useStyles = (theme) => ({
 });
 
 class ProductList extends Component {
+  constructor() {
+    super();
+    this.state = {
+      search: "",
+    };
+    this.onChange = this.onChange.bind(this);
+  }
+
   componentDidMount() {
     this.props.getAllProduct();
   }
 
+  onChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
+  }
+
   render() {
     const { classes, products } = this.props;
-    
+
     if (products)
       return (
-          <Grid container spacing={3} className={classes.root}>
-            {products.map((product) => (
-              <ProductCard key={product.product_id} product={product} />
-            ))}
+        <Grid container spacing={3} className={classes.root}>
+          <Grid className={classes.grid} item xs={12}>
+            <TextField
+              className={classes.textField}
+              type="text"
+              name="search"
+              value={this.state.search}
+              onChange={this.onChange}
+              label="ค้นหาสินค้า"
+              variant="outlined"
+              fullWidth
+            />
           </Grid>
+          {products &&
+            products
+              .filter(
+                (product) =>
+                  product.product_name
+                    .toLowerCase()
+                    .startsWith(this.state.search) ||
+                  product.product_name
+                    .toUpperCase()
+                    .startsWith(this.state.search) ||
+                  product.product_name.startsWith(this.state.search)
+              )
+              .map((product) => (
+                <ProductCard key={product.product_id} product={product} />
+              ))}
+        </Grid>
       );
     else
       return (
